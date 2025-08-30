@@ -140,10 +140,24 @@ router.post('/', async (req, res) => {
       .first();
     
     if (!agency) {
+      console.error('❌ Agency not found for ID:', agency_id);
       return res.status(404).json({
         error: 'Agency not found',
-        message_ko: '유학원을 찾을 수 없습니다'
+        message_ko: '유학원을 찾을 수 없습니다',
+        agency_id: agency_id
       });
+    }
+    
+    console.log('✅ Agency found:', {
+      agency_id: agency.agency_id,
+      agency_code: agency.agency_code,
+      name: agency.name
+    });
+    
+    // agency_code가 없으면 기본값 사용
+    if (!agency.agency_code) {
+      console.warn('⚠️ Agency has no agency_code, using default');
+      agency.agency_code = 'DEFAULT';
     }
     
     // 권한 체크 (교사는 자기 유학원만)
@@ -160,9 +174,19 @@ router.post('/', async (req, res) => {
       }
     }
     
-    // 학생 코드 자동 생성
-    const result = await db.raw('SELECT generate_student_code(?) as student_code', [agency.agency_code]);
-    const student_code = result.rows[0].student_code;
+    // 학생 코드 자동 생성 시도
+    let student_code;
+    try {
+      const result = await db.raw('SELECT generate_student_code(?) as student_code', [agency.agency_code]);
+      student_code = result.rows[0].student_code;
+      console.log('✅ Generated student code:', student_code);
+    } catch (genError) {
+      console.error('❌ Error generating student code:', genError);
+      // 함수가 없거나 에러가 발생하면 타임스탬프 기반 코드 생성
+      const timestamp = Date.now().toString(36).toUpperCase();
+      student_code = `${agency.agency_code || 'STU'}-${timestamp}`;
+      console.log('⚠️ Using fallback student code:', student_code);
+    }
     
     console.log(`📝 Creating student with code: ${student_code}`);
     
@@ -177,6 +201,22 @@ router.post('/', async (req, res) => {
       }
       return dateStr;
     };
+    
+    // 사용자 정보 디버깅
+    console.log('🔐 Current user info:', {
+      user_id: req.user?.user_id,
+      role: req.user?.role,
+      email: req.user?.email,
+      agency_id: req.user?.agency_id,
+      full_user: req.user
+    });
+    
+    // created_by 필드 확인 및 기본값 설정
+    const createdBy = req.user?.user_id || 1; // 기본값 1 설정 (임시)
+    
+    if (!req.user?.user_id) {
+      console.warn('⚠️ Warning: req.user.user_id is undefined, using default value:', createdBy);
+    }
     
     // 학생 데이터 준비
     const studentData = {
@@ -202,17 +242,66 @@ router.post('/', async (req, res) => {
       visa_expiry: formatDate(visa_expiry),
       alien_registration,
       agency_enrollment_date,
-      created_by: req.user.user_id
+      created_by: createdBy
     };
     
-    console.log('📝 Student data prepared:', JSON.stringify(studentData, null, 2));
+    console.log('📝 Student data prepared with created_by:', createdBy);
+    console.log('📝 Full student data:', JSON.stringify(studentData, null, 2));
     
     // 학생 생성
-    const [newStudent] = await db('students')
-      .insert(studentData)
-      .returning('*');
-    
-    console.log(`✅ Created student: ${name_ko} with code: ${student_code}`);
+    let newStudent;
+    try {
+      const result = await db('students')
+        .insert(studentData)
+        .returning('*');
+      
+      newStudent = result[0];
+      console.log(`✅ Created student: ${name_ko} with code: ${student_code}`);
+      console.log('✅ New student data:', newStudent);
+    } catch (dbError) {
+      console.error('❌ Database insert error:', dbError);
+      console.error('❌ Error details:', {
+        code: dbError.code,
+        detail: dbError.detail,
+        message: dbError.message,
+        table: dbError.table,
+        constraint: dbError.constraint
+      });
+      
+      // 특정 데이터베이스 에러에 대한 처리
+      if (dbError.code === '23505') { // Unique violation
+        return res.status(409).json({
+          error: 'Duplicate student code',
+          message_ko: '중복된 학생 코드입니다',
+          detail: dbError.detail
+        });
+      }
+      
+      if (dbError.code === '23503') { // Foreign key violation
+        return res.status(400).json({
+          error: 'Invalid reference',
+          message_ko: '유효하지 않은 참조입니다 (유학원 또는 사용자)',
+          detail: dbError.detail
+        });
+      }
+      
+      if (dbError.code === '23502') { // Not null violation
+        return res.status(400).json({
+          error: 'Missing required field',
+          message_ko: '필수 필드가 누락되었습니다',
+          detail: dbError.detail,
+          column: dbError.column
+        });
+      }
+      
+      // 기타 에러
+      return res.status(500).json({
+        error: 'Database error',
+        message_ko: '데이터베이스 오류가 발생했습니다',
+        message: dbError.message,
+        code: dbError.code
+      });
+    }
     
     res.status(201).json({
       success: true,
@@ -222,9 +311,11 @@ router.post('/', async (req, res) => {
     
   } catch (error) {
     console.error('❌ Create student error:', error);
+    console.error('❌ Full error object:', JSON.stringify(error, null, 2));
     res.status(500).json({
       error: 'Failed to create student',
-      message: error.message
+      message: error.message,
+      details: error.toString()
     });
   }
 });
