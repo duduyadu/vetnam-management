@@ -39,6 +39,9 @@ Thumbs.db
 uploads/
 *.sqlite
 *.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+backend/database/dev.sqlite3*
 
 # Frontend specific
 .eslintcache

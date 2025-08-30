@@ -208,7 +208,7 @@ const ExcelManager: React.FC = () => {
       
       {canDownload ? (
         <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid item xs={12} md={6}>
             <Button
               variant="contained"
               color="primary"
@@ -220,7 +220,7 @@ const ExcelManager: React.FC = () => {
               {t('button.downloadStudentList')}
             </Button>
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid item xs={12} md={6}>
             <Button
               variant="contained"
               color="secondary"
@@ -249,7 +249,7 @@ const ExcelManager: React.FC = () => {
       {canUpload ? (
         <Box>
           <Grid container spacing={2} sx={{ mb: 2 }}>
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid item xs={12} md={6}>
               <Button
                 variant="outlined"
                 startIcon={<Description />}
@@ -260,7 +260,7 @@ const ExcelManager: React.FC = () => {
                 {t('button.downloadTemplate')}
               </Button>
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid item xs={12} md={6}>
               <input
                 ref={fileInputRef}
                 type="file"
