@@ -11,5 +11,6 @@
   to = "/index.html"
   status = 200
 
-[context.production.environment]
-  REACT_APP_API_URL = "http://localhost:5000"
+# 환경변수는 Netlify 대시보드에서 설정하세요
+# [context.production.environment]
+#   REACT_APP_API_URL = "https://vetnam-management.onrender.com/api"

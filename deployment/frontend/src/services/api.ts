@@ -2,6 +2,10 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://vetnam-management.onrender.com/api';
 
+// 디버깅용: 실제 API URL 확인
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('process.env.REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+
 // Axios 인스턴스 생성
 const api = axios.create({
   baseURL: API_BASE_URL,
