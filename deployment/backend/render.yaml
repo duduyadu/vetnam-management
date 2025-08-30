@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: vietnam-student-backend
+    runtime: node
+    region: singapore
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        fromDatabase:
+          name: vietnam-student-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: vietnam-student-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: vietnam-student-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: vietnam-student-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: vietnam-student-db
+          property: database
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 5000
+
+databases:
+  - name: vietnam-student-db
+    region: singapore
+    plan: free
+    databaseName: vietnam_student_db
+    user: admin
