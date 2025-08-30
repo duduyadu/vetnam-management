@@ -13,11 +13,13 @@ class PDFService {
       if (!this.browser || !this.browser.isConnected()) {
         console.log('🌐 Launching new browser instance...');
         
-        // Windows와 Linux 환경 모두 지원
+        // 환경 감지
         const isWindows = process.platform === 'win32';
+        const isRender = process.env.RENDER === 'true' || process.env.IS_PULL_REQUEST === 'true';
+        const isProduction = process.env.NODE_ENV === 'production';
         
         const launchOptions = {
-          headless: true, // 'new' 대신 true 사용
+          headless: 'new', // Chrome의 새로운 headless 모드 사용
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
@@ -26,15 +28,61 @@ class PDFService {
             '--no-first-run',
             '--disable-gpu',
             '--disable-web-security',
-            '--disable-features=IsolateOrigins,site-per-process'
+            '--disable-features=IsolateOrigins,site-per-process',
+            '--disable-blink-features=AutomationControlled',
+            '--window-size=1920,1080',
+            '--disable-background-timer-throttling',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-renderer-backgrounding'
           ]
         };
         
-        // Windows에서는 single-process와 no-zygote 제거
+        // Render 또는 Production 환경용 특별 설정
+        if (isRender || isProduction) {
+          console.log('🔧 Production/Render environment detected');
+          
+          // Chrome 실행 파일 경로 설정 (우선순위)
+          const possiblePaths = [
+            process.env.PUPPETEER_EXECUTABLE_PATH,
+            '/usr/bin/google-chrome-stable',
+            '/usr/bin/google-chrome',
+            '/usr/bin/chromium-browser',
+            '/usr/bin/chromium'
+          ].filter(Boolean);
+          
+          // 존재하는 첫 번째 경로 찾기
+          for (const chromePath of possiblePaths) {
+            const fs = require('fs');
+            try {
+              if (fs.existsSync(chromePath)) {
+                console.log(`✅ Found Chrome at: ${chromePath}`);
+                launchOptions.executablePath = chromePath;
+                break;
+              }
+            } catch (err) {
+              console.log(`❌ Chrome not found at: ${chromePath}`);
+            }
+          }
+          
+          // 추가 Render 최적화 args
+          launchOptions.args.push('--disable-software-rasterizer');
+          launchOptions.args.push('--disable-extensions');
+          launchOptions.args.push('--disable-default-apps');
+        }
+        
+        // Windows가 아닌 환경에서만 추가
         if (!isWindows) {
           launchOptions.args.push('--no-zygote');
-          launchOptions.args.push('--single-process');
+          if (!isRender && !isProduction) {
+            launchOptions.args.push('--single-process');
+          }
         }
+        
+        console.log('📋 Launch options:', {
+          headless: launchOptions.headless,
+          executablePath: launchOptions.executablePath || 'Using bundled Chromium',
+          argsCount: launchOptions.args.length
+        });
         
         this.browser = await puppeteer.launch(launchOptions);
         console.log('✅ Browser launched successfully');
@@ -42,7 +90,26 @@ class PDFService {
       return this.browser;
     } catch (error) {
       console.error('❌ Failed to launch browser:', error);
-      throw new Error('브라우저를 시작할 수 없습니다. Chrome/Chromium이 설치되어 있는지 확인해주세요.');
+      console.error('❌ Error details:', {
+        message: error.message,
+        stack: error.stack,
+        platform: process.platform,
+        env: {
+          NODE_ENV: process.env.NODE_ENV,
+          RENDER: process.env.RENDER,
+          IS_PULL_REQUEST: process.env.IS_PULL_REQUEST,
+          PUPPETEER_EXECUTABLE_PATH: process.env.PUPPETEER_EXECUTABLE_PATH
+        }
+      });
+      
+      // 더 자세한 오류 메시지
+      if (error.message.includes('Failed to launch')) {
+        throw new Error('Chrome/Chromium을 시작할 수 없습니다. 서버에 Chrome이 설치되어 있는지 확인해주세요.');
+      } else if (error.message.includes('ENOENT')) {
+        throw new Error('Chrome 실행 파일을 찾을 수 없습니다. 설치 경로를 확인해주세요.');
+      } else {
+        throw new Error(`브라우저 시작 실패: ${error.message}`);
+      }
     }
   }
 
