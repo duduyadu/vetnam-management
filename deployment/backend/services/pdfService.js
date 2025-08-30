@@ -15,98 +15,67 @@ class PDFService {
         
         // 환경 감지
         const isWindows = process.platform === 'win32';
-        const isRender = process.env.RENDER === 'true' || process.env.IS_PULL_REQUEST === 'true';
         const isProduction = process.env.NODE_ENV === 'production';
         
+        // 기본 launch 옵션 - Puppeteer 내장 Chromium 사용
         const launchOptions = {
           headless: 'new', // Chrome의 새로운 headless 모드 사용
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
             '--disable-gpu',
             '--disable-web-security',
-            '--disable-features=IsolateOrigins,site-per-process',
-            '--disable-blink-features=AutomationControlled',
-            '--window-size=1920,1080',
-            '--disable-background-timer-throttling',
-            '--disable-backgrounding-occluded-windows',
-            '--disable-renderer-backgrounding'
+            '--window-size=1920,1080'
           ]
         };
         
-        // Render 또는 Production 환경용 특별 설정
-        if (isRender || isProduction) {
-          console.log('🔧 Production/Render environment detected');
+        // Production 환경 (Render 포함)에서 추가 설정
+        if (isProduction) {
+          console.log('🔧 Production environment detected - using Puppeteer bundled Chromium');
           
-          // Chrome 실행 파일 경로 설정 (우선순위)
-          const possiblePaths = [
-            process.env.PUPPETEER_EXECUTABLE_PATH,
-            '/usr/bin/google-chrome-stable',
-            '/usr/bin/google-chrome',
-            '/usr/bin/chromium-browser',
-            '/usr/bin/chromium'
-          ].filter(Boolean);
-          
-          // 존재하는 첫 번째 경로 찾기
-          for (const chromePath of possiblePaths) {
-            const fs = require('fs');
-            try {
-              if (fs.existsSync(chromePath)) {
-                console.log(`✅ Found Chrome at: ${chromePath}`);
-                launchOptions.executablePath = chromePath;
-                break;
-              }
-            } catch (err) {
-              console.log(`❌ Chrome not found at: ${chromePath}`);
-            }
-          }
-          
-          // 추가 Render 최적화 args
+          // Render 환경을 위한 추가 args
           launchOptions.args.push('--disable-software-rasterizer');
           launchOptions.args.push('--disable-extensions');
           launchOptions.args.push('--disable-default-apps');
+          launchOptions.args.push('--disable-background-timer-throttling');
+          launchOptions.args.push('--disable-backgrounding-occluded-windows');
+          launchOptions.args.push('--disable-renderer-backgrounding');
+          launchOptions.args.push('--disable-features=TranslateUI');
+          launchOptions.args.push('--disable-ipc-flooding-protection');
         }
         
         // Windows가 아닌 환경에서만 추가
         if (!isWindows) {
           launchOptions.args.push('--no-zygote');
-          if (!isRender && !isProduction) {
+          if (!isProduction) {
             launchOptions.args.push('--single-process');
           }
         }
         
         console.log('📋 Launch options:', {
           headless: launchOptions.headless,
-          executablePath: launchOptions.executablePath || 'Using bundled Chromium',
-          argsCount: launchOptions.args.length
+          platform: process.platform,
+          environment: isProduction ? 'production' : 'development'
         });
         
         this.browser = await puppeteer.launch(launchOptions);
-        console.log('✅ Browser launched successfully');
+        console.log('✅ Browser launched successfully with bundled Chromium');
       }
       return this.browser;
     } catch (error) {
       console.error('❌ Failed to launch browser:', error);
       console.error('❌ Error details:', {
         message: error.message,
-        stack: error.stack,
         platform: process.platform,
-        env: {
-          NODE_ENV: process.env.NODE_ENV,
-          RENDER: process.env.RENDER,
-          IS_PULL_REQUEST: process.env.IS_PULL_REQUEST,
-          PUPPETEER_EXECUTABLE_PATH: process.env.PUPPETEER_EXECUTABLE_PATH
-        }
+        env: process.env.NODE_ENV
       });
       
       // 더 자세한 오류 메시지
       if (error.message.includes('Failed to launch')) {
-        throw new Error('Chrome/Chromium을 시작할 수 없습니다. 서버에 Chrome이 설치되어 있는지 확인해주세요.');
+        throw new Error('Chromium을 시작할 수 없습니다. Puppeteer 설치를 확인해주세요.');
       } else if (error.message.includes('ENOENT')) {
-        throw new Error('Chrome 실행 파일을 찾을 수 없습니다. 설치 경로를 확인해주세요.');
+        throw new Error('Chromium 실행 파일을 찾을 수 없습니다. npm install을 다시 실행해주세요.');
       } else {
         throw new Error(`브라우저 시작 실패: ${error.message}`);
       }
