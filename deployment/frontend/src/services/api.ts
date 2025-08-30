@@ -203,4 +203,16 @@ export const pdfAPI = {
     api.get(`/pdf-reports/history/student/${studentId}`)
 };
 
+// Dashboard API
+export const dashboardAPI = {
+  getStats: () => 
+    api.get('/dashboard/stats'),
+  
+  getRecentActivities: () =>
+    api.get('/dashboard/recent-activities'),
+  
+  getUpcomingConsultations: () =>
+    api.get('/dashboard/upcoming-consultations')
+};
+
 export default api;

@@ -113,5 +113,39 @@
       "visa": "비자",
       "other": "기타"
     }
+  },
+  "page": {
+    "consultationManagement": "상담 관리"
+  },
+  "button": {
+    "newConsultation": "새 상담 추가"
+  },
+  "placeholder": {
+    "searchConsultation": "학생 이름 또는 상담 내용 검색..."
+  },
+  "table": {
+    "consultationDate": "상담 날짜",
+    "studentName": "학생 이름",
+    "studentCode": "학생 코드",
+    "consultationType": "상담 유형",
+    "counselor": "상담사",
+    "nextConsultation": "다음 상담",
+    "actions": "작업"
+  },
+  "text": {
+    "loading": "로딩 중...",
+    "noConsultations": "상담 기록이 없습니다",
+    "downloadProgress": "다운로드 진행률"
+  },
+  "dashboard": {
+    "title": "대시보드",
+    "totalStudents": "전체 학생 수",
+    "activeStudents": "재학 중",
+    "monthlyConsultations": "이번 달 상담",
+    "graduatedStudents": "졸업생",
+    "recentActivities": "최근 활동",
+    "upcomingConsultations": "예정된 상담",
+    "noRecentActivities": "최근 활동이 없습니다",
+    "noUpcomingConsultations": "예정된 상담이 없습니다"
   }
 }

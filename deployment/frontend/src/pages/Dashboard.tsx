@@ -24,7 +24,7 @@ import {
   Person
 } from '@mui/icons-material';
 import Layout from '../components/Layout';
-import api from '../services/api';
+import { dashboardAPI } from '../services/api';
 
 interface DashboardStats {
   totalStudents: number;
@@ -62,10 +62,21 @@ const Dashboard: React.FC = () => {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/dashboard/stats');
+      const response = await dashboardAPI.getStats();
       setDashboardData(response.data.data);
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
+      // 에러 시 기본값 설정
+      setDashboardData({
+        stats: {
+          totalStudents: 0,
+          activeStudents: 0,
+          graduatedStudents: 0,
+          monthlyConsultations: 0
+        },
+        recentActivities: [],
+        upcomingConsultations: []
+      });
     } finally {
       setLoading(false);
     }
@@ -73,25 +84,25 @@ const Dashboard: React.FC = () => {
 
   const stats = dashboardData ? [
     {
-      title: '전체 학생 수',
+      title: i18nT('dashboard.totalStudents'),
       value: dashboardData.stats.totalStudents.toString(),
       icon: <School />,
       color: '#1976d2'
     },
     {
-      title: '재학 중',
+      title: i18nT('dashboard.activeStudents'),
       value: dashboardData.stats.activeStudents.toString(),
       icon: <People />,
       color: '#4caf50'
     },
     {
-      title: '이번 달 상담',
+      title: i18nT('dashboard.monthlyConsultations'),
       value: dashboardData.stats.monthlyConsultations.toString(),
       icon: <Assignment />,
       color: '#ff9800'
     },
     {
-      title: '졸업생',
+      title: i18nT('dashboard.graduatedStudents'),
       value: dashboardData.stats.graduatedStudents.toString(),
       icon: <TrendingUp />,
       color: '#9c27b0'
@@ -110,10 +121,11 @@ const Dashboard: React.FC = () => {
 
   const getConsultationType = (type: string) => {
     switch(type) {
-      case 'regular': return '정기상담';
-      case 'special': return '특별상담';
-      case 'academic': return '학업상담';
-      case 'career': return '진로상담';
+      case 'academic': return i18nT('consultation.types.academic');
+      case 'career': return i18nT('consultation.types.career');
+      case 'personal': return i18nT('consultation.types.personal');
+      case 'visa': return i18nT('consultation.types.visa');
+      case 'other': return i18nT('consultation.types.other');
       default: return type;
     }
   };
@@ -191,12 +203,12 @@ const Dashboard: React.FC = () => {
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
               <Event sx={{ mr: 1 }} />
-              {t('dashboard.recentActivity')}
+              {i18nT('dashboard.recentActivities')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             {dashboardData?.recentActivities.length === 0 ? (
               <Typography color="textSecondary">
-                {t('dashboard.noRecentActivity')}
+                {i18nT('dashboard.noRecentActivities')}
               </Typography>
             ) : (
               <List>

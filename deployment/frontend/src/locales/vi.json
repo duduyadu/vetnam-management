@@ -113,5 +113,39 @@
       "visa": "Visa",
       "other": "Khác"
     }
+  },
+  "page": {
+    "consultationManagement": "Quản lý tư vấn"
+  },
+  "button": {
+    "newConsultation": "Thêm tư vấn mới"
+  },
+  "placeholder": {
+    "searchConsultation": "Tìm kiếm tên sinh viên hoặc nội dung tư vấn..."
+  },
+  "table": {
+    "consultationDate": "Ngày tư vấn",
+    "studentName": "Tên sinh viên",
+    "studentCode": "Mã sinh viên",
+    "consultationType": "Loại tư vấn",
+    "counselor": "Người tư vấn",
+    "nextConsultation": "Tư vấn tiếp theo",
+    "actions": "Thao tác"
+  },
+  "text": {
+    "loading": "Đang tải...",
+    "noConsultations": "Không có hồ sơ tư vấn",
+    "downloadProgress": "Tiến trình tải xuống"
+  },
+  "dashboard": {
+    "title": "Bảng điều khiển",
+    "totalStudents": "Tổng số sinh viên",
+    "activeStudents": "Đang học",
+    "monthlyConsultations": "Tư vấn tháng này",
+    "graduatedStudents": "Đã tốt nghiệp",
+    "recentActivities": "Hoạt động gần đây",
+    "upcomingConsultations": "Tư vấn sắp tới",
+    "noRecentActivities": "Không có hoạt động gần đây",
+    "noUpcomingConsultations": "Không có tư vấn sắp tới"
   }
 }
