@@ -209,21 +209,42 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+// 서버 시작 및 에러 처리
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔒 CORS: Configured for Netlify and local development`);
+  console.log(`📄 PDF Service: Using Puppeteer with bundled Chromium`);
   
   // CORS 디버깅 정보
   if (process.env.ALLOWED_ORIGINS) {
     console.log(`✅ Additional allowed origins: ${process.env.ALLOWED_ORIGINS}`);
   }
-  
-  // Chrome/Puppeteer 설정 정보
-  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
-    console.log(`🌐 Chrome path: ${process.env.PUPPETEER_EXECUTABLE_PATH}`);
+});
+
+// 프로세스 에러 처리
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  // 애플리케이션을 종료하지 않고 계속 실행
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  // 심각한 에러인 경우에만 종료
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use`);
+    process.exit(1);
   }
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('📛 SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('🛑 HTTP server closed');
+    process.exit(0);
+  });
 });
 
 module.exports = app;

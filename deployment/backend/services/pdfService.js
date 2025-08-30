@@ -1,15 +1,35 @@
-const puppeteer = require('puppeteer');
+// Puppeteer를 지연 로딩으로 변경 - 메모리 절약
+let puppeteer = null;
 const fs = require('fs').promises;
 const path = require('path');
 
 class PDFService {
   constructor() {
     this.browser = null;
+    this.puppeteerLoaded = false;
+  }
+  
+  // Puppeteer 동적 로딩
+  async loadPuppeteer() {
+    if (!this.puppeteerLoaded) {
+      try {
+        console.log('📦 Loading Puppeteer...');
+        puppeteer = require('puppeteer');
+        this.puppeteerLoaded = true;
+        console.log('✅ Puppeteer loaded successfully');
+      } catch (error) {
+        console.error('❌ Failed to load Puppeteer:', error);
+        throw new Error('PDF 생성 모듈을 로드할 수 없습니다.');
+      }
+    }
   }
 
   // 브라우저 인스턴스 관리
   async getBrowser() {
     try {
+      // Puppeteer 먼저 로드
+      await this.loadPuppeteer();
+      
       if (!this.browser || !this.browser.isConnected()) {
         console.log('🌐 Launching new browser instance...');
         
