@@ -43,7 +43,7 @@ const ExcelManager: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `http://localhost:5000/api/excel/${type}/download`,
+        `https://vetnam-management.onrender.com/api/excel/${type}/download`,
         {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -96,7 +96,7 @@ const ExcelManager: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        'http://localhost:5000/api/excel/template/download',
+        'https://vetnam-management.onrender.com/api/excel/template/download',
         {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -148,7 +148,7 @@ const ExcelManager: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/api/excel/students/upload',
+        'https://vetnam-management.onrender.com/api/excel/students/upload',
         formData,
         {
           headers: {

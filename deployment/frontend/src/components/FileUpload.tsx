@@ -120,7 +120,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         : '/api/files/upload/single';
 
       const response = await axios.post(
-        `http://localhost:5000${endpoint}`,
+        `https://vetnam-management.onrender.com${endpoint}`,
         formData,
         {
           headers: {

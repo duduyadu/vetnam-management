@@ -1,5 +1,5 @@
 // API 설정
-export const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+export const API_URL = process.env.REACT_APP_API_URL || 'https://vetnam-management.onrender.com';
 
 // 기타 설정
 export const APP_NAME = 'Vietnam Student Management System';

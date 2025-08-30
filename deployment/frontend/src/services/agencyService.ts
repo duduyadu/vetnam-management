@@ -48,7 +48,7 @@ class AgencyService {
     try {
       this.loading = true;
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/agencies', {
+      const response = await fetch('https://vetnam-management.onrender.com/api/agencies', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

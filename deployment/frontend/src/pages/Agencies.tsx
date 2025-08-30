@@ -68,7 +68,7 @@ const Agencies: React.FC = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/agencies', {
+      const response = await fetch('https://vetnam-management.onrender.com/api/agencies', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -141,8 +141,8 @@ const Agencies: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const url = editingAgency 
-        ? `http://localhost:5000/api/agencies/${editingAgency.agency_id}`
-        : 'http://localhost:5000/api/agencies';
+        ? `https://vetnam-management.onrender.com/api/agencies/${editingAgency.agency_id}`
+        : 'https://vetnam-management.onrender.com/api/agencies';
       
       const response = await fetch(url, {
         method: editingAgency ? 'PUT' : 'POST',
@@ -175,7 +175,7 @@ const Agencies: React.FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/agencies/${agencyId}`, {
+      const response = await fetch(`https://vetnam-management.onrender.com/api/agencies/${agencyId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
