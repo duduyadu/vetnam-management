@@ -1,37 +1,14 @@
-// Puppeteer를 완전히 선택적으로 로드
-let puppeteer = null;
-let puppeteerAvailable = false;
-
-// Puppeteer 사용 가능 여부 체크
-try {
-  puppeteer = require('puppeteer');
-  puppeteerAvailable = true;
-  console.log('✅ Puppeteer is available for PDF generation');
-} catch (error) {
-  console.warn('⚠️ Puppeteer not available - PDF generation will be disabled');
-  console.warn('⚠️ To enable PDF generation, run: npm install puppeteer');
-}
-
+const puppeteer = require('puppeteer');
 const fs = require('fs').promises;
 const path = require('path');
 
 class PDFService {
   constructor() {
     this.browser = null;
-    this.isAvailable = puppeteerAvailable;
-  }
-  
-  // PDF 서비스 사용 가능 여부 확인
-  checkAvailability() {
-    if (!this.isAvailable) {
-      throw new Error('PDF 생성 서비스를 사용할 수 없습니다. 서버 관리자에게 문의하세요.');
-    }
   }
 
   // 브라우저 인스턴스 관리
   async getBrowser() {
-    this.checkAvailability();
-    
     try {
       if (!this.browser || !this.browser.isConnected()) {
         console.log('🌐 Launching new browser instance...');
@@ -107,8 +84,6 @@ class PDFService {
 
   // HTML을 PDF로 변환
   async generatePDFFromHTML(htmlContent, options = {}) {
-    this.checkAvailability();
-    
     let page = null;
     
     try {
