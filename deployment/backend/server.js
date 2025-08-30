@@ -3,7 +3,19 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 require('dotenv').config();
-const performanceMonitor = require('./utils/performance');
+
+// 성능 모니터를 선택적으로 로드
+let performanceMonitor;
+try {
+  performanceMonitor = require('./utils/performance');
+} catch (error) {
+  console.warn('⚠️ Performance monitor not available');
+  // 더미 성능 모니터 생성
+  performanceMonitor = {
+    measureResponseTime: () => (req, res, next) => next(),
+    generateReport: () => ({})
+  };
+}
 
 const app = express();
 const PORT = process.env.PORT || 5001;

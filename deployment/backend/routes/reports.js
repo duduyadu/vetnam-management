@@ -6,7 +6,12 @@ const reportService = require('../services/reportService');
 const fs = require('fs').promises;
 const path = require('path');
 
+// PDF 서비스 사용 가능 여부 확인
+const pdfService = require('../services/pdfService');
+const isPDFAvailable = pdfService.isAvailable;
+
 console.log('🚀 Reports router loaded');
+console.log(isPDFAvailable ? '✅ PDF generation enabled' : '⚠️ PDF generation disabled');
 
 router.use(verifyToken);
 
