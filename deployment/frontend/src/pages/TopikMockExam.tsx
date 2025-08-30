@@ -109,7 +109,7 @@ const TopikMockExam: React.FC = () => {
       
       // 학생 정보 및 TOPIK 시험 결과 로드
       const response = await axios.get(
-        `${API_URL}/api/topik/student/${studentId}`,
+        `${API_URL}/topik/student/${studentId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -139,14 +139,14 @@ const TopikMockExam: React.FC = () => {
       if (editingExam) {
         // 수정
         await axios.put(
-          `${API_URL}/api/topik/${editingExam.exam_id}`,
+          `${API_URL}/topik/${editingExam.exam_id}`,
           data,
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         // 생성
         await axios.post(
-          `${API_URL}/api/topik`,
+          `${API_URL}/topik`,
           data,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -179,7 +179,7 @@ const TopikMockExam: React.FC = () => {
       try {
         const token = localStorage.getItem('token');
         await axios.delete(
-          `${API_URL}/api/topik/${examId}`,
+          `${API_URL}/topik/${examId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         loadExams();

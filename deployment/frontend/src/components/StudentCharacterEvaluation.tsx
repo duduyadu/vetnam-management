@@ -165,7 +165,7 @@ const StudentCharacterEvaluation: React.FC<StudentCharacterEvaluationProps> = ({
       setLoading(true);
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${API_URL}/api/character-evaluations/student/${studentId}/latest`,
+        `${API_URL}/character-evaluations/student/${studentId}/latest`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -194,7 +194,7 @@ const StudentCharacterEvaluation: React.FC<StudentCharacterEvaluationProps> = ({
       if (evaluation.id) {
         // 수정
         await axios.put(
-          `${API_URL}/api/character-evaluations/${evaluation.id}`,
+          `${API_URL}/character-evaluations/${evaluation.id}`,
           evaluation,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -202,7 +202,7 @@ const StudentCharacterEvaluation: React.FC<StudentCharacterEvaluationProps> = ({
       } else {
         // 생성
         await axios.post(
-          `${API_URL}/api/character-evaluations`,
+          `${API_URL}/character-evaluations`,
           evaluation,
           { headers: { Authorization: `Bearer ${token}` } }
         );

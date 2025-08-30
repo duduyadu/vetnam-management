@@ -97,7 +97,7 @@ const StudentSpecialActivities: React.FC<StudentSpecialActivitiesProps> = ({
       setLoading(true);
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${API_URL}/api/special-activities`,
+        `${API_URL}/special-activities`,
         {
           headers: { Authorization: `Bearer ${token}` },
           params: { student_id: studentId }
@@ -122,7 +122,7 @@ const StudentSpecialActivities: React.FC<StudentSpecialActivitiesProps> = ({
       if (isEditing && currentActivity.id) {
         // 수정
         await axios.put(
-          `${API_URL}/api/special-activities/${currentActivity.id}`,
+          `${API_URL}/special-activities/${currentActivity.id}`,
           currentActivity,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -130,7 +130,7 @@ const StudentSpecialActivities: React.FC<StudentSpecialActivitiesProps> = ({
       } else {
         // 생성
         await axios.post(
-          `${API_URL}/api/special-activities`,
+          `${API_URL}/special-activities`,
           currentActivity,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -153,7 +153,7 @@ const StudentSpecialActivities: React.FC<StudentSpecialActivitiesProps> = ({
     try {
       const token = localStorage.getItem('token');
       await axios.delete(
-        `${API_URL}/api/special-activities/${id}`,
+        `${API_URL}/special-activities/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSuccess('활동이 삭제되었습니다');

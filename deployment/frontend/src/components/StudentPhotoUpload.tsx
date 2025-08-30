@@ -75,7 +75,7 @@ const StudentPhotoUpload: React.FC<StudentPhotoUploadProps> = ({
 
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        `${API_URL}/api/students/${studentId}/photo`,
+        `${API_URL}/students/${studentId}/photo`,
         formData,
         {
           headers: {
@@ -110,7 +110,7 @@ const StudentPhotoUpload: React.FC<StudentPhotoUploadProps> = ({
 
       const token = localStorage.getItem('token');
       await axios.delete(
-        `${API_URL}/api/students/${studentId}/photo`,
+        `${API_URL}/students/${studentId}/photo`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }

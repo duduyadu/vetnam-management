@@ -83,7 +83,7 @@ const StudentLearningMetrics: React.FC<StudentLearningMetricsProps> = ({
       setLoading(true);
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${API_URL}/api/learning-metrics/student/${studentId}/latest`,
+        `${API_URL}/learning-metrics/student/${studentId}/latest`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -105,7 +105,7 @@ const StudentLearningMetrics: React.FC<StudentLearningMetricsProps> = ({
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${API_URL}/api/learning-metrics`,
+        `${API_URL}/learning-metrics`,
         { 
           headers: { Authorization: `Bearer ${token}` },
           params: { student_id: studentId }
@@ -140,7 +140,7 @@ const StudentLearningMetrics: React.FC<StudentLearningMetricsProps> = ({
       if (metrics.id) {
         // 수정
         await axios.put(
-          `${API_URL}/api/learning-metrics/${metrics.id}`,
+          `${API_URL}/learning-metrics/${metrics.id}`,
           calculatedMetrics,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -148,7 +148,7 @@ const StudentLearningMetrics: React.FC<StudentLearningMetricsProps> = ({
       } else {
         // 생성
         await axios.post(
-          `${API_URL}/api/learning-metrics`,
+          `${API_URL}/learning-metrics`,
           calculatedMetrics,
           { headers: { Authorization: `Bearer ${token}` } }
         );
