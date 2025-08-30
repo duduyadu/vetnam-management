@@ -8,9 +8,57 @@ const performanceMonitor = require('./utils/performance');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+// CORS 설정 - Netlify와 로컬 개발 환경 모두 지원
+const corsOptions = {
+  origin: function (origin, callback) {
+    // 환경변수에서 허용된 도메인 가져오기
+    const envOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
+    
+    const allowedOrigins = [
+      'https://vetnam-student.netlify.app',
+      'https://vietnam-student.netlify.app',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001',
+      ...envOrigins
+    ];
+    
+    // 개발 모드에서는 모든 origin 허용
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    
+    // origin이 없는 경우 (예: Postman, 서버 간 통신) 허용
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Netlify의 preview 도메인도 허용
+    if (origin.includes('netlify.app') || origin.includes('.netlify.app') || allowedOrigins.includes(origin)) {
+      console.log('✅ CORS allowed origin:', origin);
+      callback(null, true);
+    } else {
+      console.log('❌ CORS blocked origin:', origin);
+      // 에러를 던지는 대신 false를 반환하여 더 친숙한 CORS 에러 메시지가 나오도록 함
+      callback(null, false);
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Disposition', 'Content-Length'],
+  maxAge: 86400, // 24 hours
+  preflightContinue: false,
+  optionsSuccessStatus: 204 // 일부 legacy 브라우저를 위해
+};
+
 // Middleware
-app.use(helmet());
-app.use(cors());
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+  contentSecurityPolicy: false
+}));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -25,6 +73,9 @@ app.use((req, res, next) => {
   console.log(`[REQUEST] ${req.method} ${req.originalUrl} - Body:`, req.body);
   next();
 });
+
+// OPTIONS preflight 요청 처리
+app.options('*', cors(corsOptions));
 
 // Routes
 const authRoutes = require('./routes/auth');
@@ -122,12 +173,27 @@ app.get('/api/debug/routes', (req, res) => {
 app.use((err, req, res, next) => {
   console.error('❌ Error caught in middleware:', err.message);
   console.error('Stack:', err.stack);
+  
+  // CORS 에러 특별 처리
+  if (err.message && err.message.includes('CORS')) {
+    return res.status(403).json({
+      error: {
+        message: 'CORS policy error',
+        message_ko: 'CORS 정책 오류입니다',
+        message_vi: 'Lỗi chính sách CORS',
+        origin: req.headers.origin,
+        details: err.message
+      }
+    });
+  }
+  
+  // 일반적인 에러 처리
   res.status(err.status || 500).json({
     error: {
-      message: 'Login failed',
-      message_ko: '로그인에 실패했습니다',
-      message_vi: 'Đăng nhập thất bại',
-      details: err.message // 디버깅용
+      message: err.message || 'Internal server error',
+      message_ko: '서버 오류가 발생했습니다',
+      message_vi: 'Lỗi máy chủ',
+      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
     }
   });
 });
@@ -144,8 +210,20 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
+  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`📍 Health check: http://localhost:${PORT}/health`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🔒 CORS: Configured for Netlify and local development`);
+  
+  // CORS 디버깅 정보
+  if (process.env.ALLOWED_ORIGINS) {
+    console.log(`✅ Additional allowed origins: ${process.env.ALLOWED_ORIGINS}`);
+  }
+  
+  // Chrome/Puppeteer 설정 정보
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    console.log(`🌐 Chrome path: ${process.env.PUPPETEER_EXECUTABLE_PATH}`);
+  }
 });
 
 module.exports = app;
