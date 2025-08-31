@@ -3,8 +3,8 @@ import { authAPI } from '../services/api';
 
 interface User {
   user_id: number;
-  email: string;
-  full_name: string;
+  username: string;
+  name: string;
   role: 'admin' | 'teacher' | 'korean_branch';
   agency_name?: string;
   branch_name?: string;
