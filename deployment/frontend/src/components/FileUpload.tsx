@@ -22,6 +22,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { extractErrorMessage } from '../utils/errorHandler';
+import { API_URL } from '../config';
 
 interface FileUploadProps {
   studentId?: number;
@@ -120,7 +121,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         : '/api/files/upload/single';
 
       const response = await axios.post(
-        `https://vetnam-management.onrender.com${endpoint}`,
+        `${API_URL.replace('/api', '')}${endpoint}`,
         formData,
         {
           headers: {

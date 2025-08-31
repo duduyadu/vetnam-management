@@ -21,6 +21,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { extractErrorMessage } from '../utils/errorHandler';
+import { API_URL } from '../config';
 
 const ExcelManager: React.FC = () => {
   const { user } = useAuth();
@@ -43,7 +44,7 @@ const ExcelManager: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `https://vetnam-management.onrender.com/api/excel/${type}/download`,
+        `${API_URL}/excel/${type}/download`,
         {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -96,7 +97,7 @@ const ExcelManager: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        'https://vetnam-management.onrender.com/api/excel/template/download',
+        `${API_URL}/excel/template/download`,
         {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -148,7 +149,7 @@ const ExcelManager: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'https://vetnam-management.onrender.com/api/excel/students/upload',
+        `${API_URL}/excel/students/upload`,
         formData,
         {
           headers: {

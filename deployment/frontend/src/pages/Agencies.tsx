@@ -29,6 +29,7 @@ import {
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import { extractErrorMessage } from '../utils/errorHandler';
+import { agenciesAPI } from '../services/api';
 
 interface Agency {
   agency_id: number;
@@ -67,16 +68,10 @@ const Agencies: React.FC = () => {
   const loadAgencies = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch('https://vetnam-management.onrender.com/api/agencies', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
+      const response = await agenciesAPI.getAll();
       
-      if (data.success) {
-        setAgencies(data.data || []);
+      if (response.data.success) {
+        setAgencies(response.data.data || []);
       }
     } catch (error: any) {
       console.error('Failed to load agencies:', error);
@@ -139,28 +134,21 @@ const Agencies: React.FC = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const url = editingAgency 
-        ? `https://vetnam-management.onrender.com/api/agencies/${editingAgency.agency_id}`
-        : 'https://vetnam-management.onrender.com/api/agencies';
-      
-      const response = await fetch(url, {
-        method: editingAgency ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      let response;
+      if (editingAgency) {
+        response = await agenciesAPI.update(editingAgency.agency_id, formData);
+      } else {
+        response = await agenciesAPI.create(formData);
+      }
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
       
-      if (response.ok && data.success) {
-        setSuccess(data.message_ko || '유학원이 저장되었습니다.');
+      if (response.data.success) {
+        setSuccess(response.data.message || '유학원이 저장되었습니다.');
         handleCloseModal();
         loadAgencies();
       } else {
-        setError(extractErrorMessage(data, '유학원 저장에 실패했습니다.'));
+        setError(extractErrorMessage(response.data, '유학원 저장에 실패했습니다.'));
       }
     } catch (error: any) {
       console.error('Failed to save agency:', error);
@@ -174,21 +162,13 @@ const Agencies: React.FC = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://vetnam-management.onrender.com/api/agencies/${agencyId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const data = await response.json();
+      const response = await agenciesAPI.delete(agencyId);
       
-      if (response.ok && data.success) {
-        setSuccess(data.message_ko || '유학원이 삭제되었습니다.');
+      if (response.data.success) {
+        setSuccess(response.data.message || '유학원이 삭제되었습니다.');
         loadAgencies();
       } else {
-        setError(extractErrorMessage(data, '유학원 삭제에 실패했습니다.'));
+        setError(extractErrorMessage(response.data, '유학원 삭제에 실패했습니다.'));
       }
     } catch (error: any) {
       console.error('Failed to delete agency:', error);

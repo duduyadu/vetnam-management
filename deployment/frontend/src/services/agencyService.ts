@@ -1,3 +1,5 @@
+import { API_URL } from '../config';
+
 // 유학원 데이터 캐싱 서비스
 interface Agency {
   agency_id: number;
@@ -48,7 +50,7 @@ class AgencyService {
     try {
       this.loading = true;
       const token = localStorage.getItem('token');
-      const response = await fetch('https://vetnam-management.onrender.com/api/agencies', {
+      const response = await fetch(`${API_URL}/agencies`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

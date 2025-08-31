@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://YOUR-APP-NAME.up.railway.app/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://vietnam-student-backend-production.up.railway.app/api';
 
 // 디버깅용: 실제 API URL 확인
 console.log('API_BASE_URL:', API_BASE_URL);
