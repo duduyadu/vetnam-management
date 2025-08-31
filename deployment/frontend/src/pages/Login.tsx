@@ -28,7 +28,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
   
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -81,8 +81,8 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log('Login attempt:', { email, password });
-      await login(email, password);
+      console.log('Login attempt:', { username, password });
+      await login(username, password);
       console.log('Login successful, navigating to dashboard...');
       
       // 로그인 성공 후 강제로 페이지 새로고침
@@ -149,13 +149,13 @@ const Login: React.FC = () => {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label={t('auth.email')}
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
               autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               disabled={loading}
             />
             <TextField
