@@ -152,6 +152,7 @@ const UserManagement: React.FC = () => {
         loadUsers();
         // 폼 초기화
         setFormData({
+          username: '',
           email: '',
           password: '',
           full_name: '',
@@ -194,7 +195,7 @@ const UserManagement: React.FC = () => {
   };
 
   const handleDeleteUser = async (user: User) => {
-    if (!window.confirm(`정말로 ${user.full_name}(${user.email}) 계정을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) {
+    if (!window.confirm(`정말로 ${user.full_name}(${user.username}) 계정을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) {
       return;
     }
 
