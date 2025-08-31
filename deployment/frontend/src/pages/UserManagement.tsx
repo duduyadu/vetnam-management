@@ -39,7 +39,8 @@ import { extractErrorMessage } from '../utils/errorHandler';
 
 interface User {
   user_id: number;
-  email: string;
+  username: string;
+  email?: string;
   full_name: string;
   role: 'admin' | 'teacher' | 'korean_branch';
   agency_name?: string;
@@ -70,6 +71,7 @@ const UserManagement: React.FC = () => {
 
   // 새 사용자 폼 데이터
   const [formData, setFormData] = useState({
+    username: '',
     email: '',
     password: '',
     full_name: '',
@@ -116,7 +118,7 @@ const UserManagement: React.FC = () => {
       setError('');
       
       // 유효성 검사
-      if (!formData.email || !formData.password || !formData.full_name) {
+      if (!formData.username || !formData.password || !formData.full_name) {
         setError('필수 항목을 모두 입력해주세요.');
         return;
       }
@@ -277,7 +279,7 @@ const UserManagement: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>이메일</TableCell>
+                <TableCell>사용자 ID</TableCell>
                 <TableCell>이름</TableCell>
                 <TableCell>역할</TableCell>
                 <TableCell>소속</TableCell>
@@ -301,7 +303,7 @@ const UserManagement: React.FC = () => {
               ) : (
                 users.map((user) => (
                   <TableRow key={user.user_id}>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.username || user.email}</TableCell>
                     <TableCell>{user.full_name}</TableCell>
                     <TableCell>
                       <Chip
@@ -353,11 +355,18 @@ const UserManagement: React.FC = () => {
           <DialogContent>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
               <TextField
-                label="이메일"
+                label="사용자 ID"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                required
+                fullWidth
+                helperText="로그인에 사용할 ID"
+              />
+              <TextField
+                label="이메일 (선택사항)"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
                 fullWidth
               />
               <TextField
@@ -453,7 +462,7 @@ const UserManagement: React.FC = () => {
           <DialogContent>
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2" sx={{ mb: 2 }}>
-                {selectedUser?.full_name} ({selectedUser?.email})
+                {selectedUser?.full_name} ({selectedUser?.username || selectedUser?.email})
               </Typography>
               <TextField
                 label="새 비밀번호"
