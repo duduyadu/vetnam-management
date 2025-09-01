@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 긴급 수정 도구</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #e74c3c;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        .status-box {
+            background: #f8f9fa;
+            border-left: 5px solid #007bff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        .error-box {
+            background: #fee;
+            border-left: 5px solid #e74c3c;
+        }
+        .success-box {
+            background: #efe;
+            border-left: 5px solid #27ae60;
+        }
+        button {
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .fix-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        .fix-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+        }
+        .check-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        .check-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
+        }
+        .success-btn {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+        .code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .steps {
+            counter-reset: step-counter;
+            margin: 20px 0;
+        }
+        .step {
+            position: relative;
+            padding-left: 50px;
+            margin: 20px 0;
+            counter-increment: step-counter;
+        }
+        .step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 35px;
+            height: 35px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 긴급 수정 도구</h1>
+        <div class="subtitle">onrender.com 문제를 완전히 해결합니다</div>
+        
+        <div class="status-box error-box" id="problem">
+            <h3>🔴 발견된 문제</h3>
+            <p>API 요청이 <strong>vetnam-management.onrender.com</strong>으로 가고 있습니다.</p>
+            <p>이것은 잘못된 주소입니다. Railway로 변경해야 합니다.</p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ 중요:</strong> 이 도구를 실행하기 전에 개발 서버(npm start)를 종료하세요!
+        </div>
+
+        <button class="fix-btn" onclick="emergencyFix()">
+            🔧 긴급 수정 실행
+        </button>
+
+        <div class="spinner" id="spinner"></div>
+        
+        <div class="result" id="result"></div>
+
+        <div class="steps">
+            <h3>📋 수정 단계</h3>
+            <div class="step">
+                <strong>브라우저 캐시 완전 삭제</strong>
+                <p>localStorage, sessionStorage, 쿠키, Service Worker 모두 제거</p>
+            </div>
+            <div class="step">
+                <strong>올바른 API URL 설정</strong>
+                <p>Railway 백엔드 URL로 강제 설정</p>
+            </div>
+            <div class="step">
+                <strong>검증 및 확인</strong>
+                <p>설정이 올바르게 되었는지 확인</p>
+            </div>
+        </div>
+
+        <button class="check-btn" onclick="checkCurrentSettings()">
+            🔍 현재 설정 확인
+        </button>
+
+        <button class="success-btn" onclick="goToApp()">
+            🚀 앱으로 이동 (새 창)
+        </button>
+
+        <div class="code">
+            <strong>올바른 API URL:</strong><br>
+            https://vietnam-student-backend-production.up.railway.app/api
+        </div>
+    </div>
+
+    <script>
+        const CORRECT_API_URL = 'https://vietnam-student-backend-production.up.railway.app/api';
+        
+        async function emergencyFix() {
+            const spinner = document.getElementById('spinner');
+            const result = document.getElementById('result');
+            
+            spinner.style.display = 'block';
+            result.style.display = 'none';
+            
+            try {
+                // 1. localStorage 완전 삭제
+                localStorage.clear();
+                console.log('✅ localStorage 삭제 완료');
+                
+                // 2. sessionStorage 완전 삭제
+                sessionStorage.clear();
+                console.log('✅ sessionStorage 삭제 완료');
+                
+                // 3. 쿠키 모두 삭제
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                console.log('✅ 쿠키 삭제 완료');
+                
+                // 4. Service Worker 제거
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for(let registration of registrations) {
+                        await registration.unregister();
+                        console.log('✅ Service Worker 제거:', registration.scope);
+                    }
+                }
+                
+                // 5. 캐시 스토리지 삭제
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(
+                        cacheNames.map(cacheName => {
+                            console.log('Deleting cache:', cacheName);
+                            return caches.delete(cacheName);
+                        })
+                    );
+                    console.log('✅ 캐시 스토리지 삭제 완료');
+                }
+                
+                // 6. 올바른 API URL 설정
+                localStorage.setItem('API_URL', CORRECT_API_URL);
+                localStorage.setItem('REACT_APP_API_URL', CORRECT_API_URL);
+                
+                // 성공 메시지
+                spinner.style.display = 'none';
+                result.style.display = 'block';
+                result.className = 'result success-box';
+                result.innerHTML = `
+                    <h3>✅ 수정 완료!</h3>
+                    <p>모든 캐시가 삭제되고 올바른 API URL이 설정되었습니다.</p>
+                    <hr>
+                    <h4>다음 단계:</h4>
+                    <ol>
+                        <li>이 브라우저 탭을 닫기</li>
+                        <li>터미널에서: <code>npm start</code> 실행</li>
+                        <li>새 시크릿 창 열기 (Ctrl+Shift+N)</li>
+                        <li>http://localhost:3001 접속</li>
+                        <li>F12 → Console에서 API URL 확인</li>
+                    </ol>
+                `;
+                
+                // 3초 후 자동 새로고침
+                setTimeout(() => {
+                    if (confirm('수정이 완료되었습니다. 페이지를 새로고침하시겠습니까?')) {
+                        window.location.reload(true);
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                spinner.style.display = 'none';
+                result.style.display = 'block';
+                result.className = 'result error-box';
+                result.innerHTML = `
+                    <h3>❌ 오류 발생</h3>
+                    <p>${error.message}</p>
+                    <p>수동으로 브라우저 캐시를 삭제해주세요:</p>
+                    <ol>
+                        <li>Ctrl+Shift+Delete 누르기</li>
+                        <li>"캐시된 이미지 및 파일" 선택</li>
+                        <li>"인터넷 사용 기록 삭제" 클릭</li>
+                    </ol>
+                `;
+            }
+        }
+        
+        function checkCurrentSettings() {
+            const result = document.getElementById('result');
+            
+            const settings = {
+                localStorage_API: localStorage.getItem('API_URL'),
+                localStorage_REACT: localStorage.getItem('REACT_APP_API_URL'),
+                env_REACT_APP: typeof process !== 'undefined' ? process.env?.REACT_APP_API_URL : 'N/A',
+                cookies: document.cookie || '없음'
+            };
+            
+            result.style.display = 'block';
+            result.className = 'result status-box';
+            result.innerHTML = `
+                <h3>🔍 현재 설정 상태</h3>
+                <ul>
+                    <li><strong>localStorage API_URL:</strong> ${settings.localStorage_API || '설정 안됨'}</li>
+                    <li><strong>localStorage REACT_APP_API_URL:</strong> ${settings.localStorage_REACT || '설정 안됨'}</li>
+                    <li><strong>쿠키:</strong> ${settings.cookies}</li>
+                </ul>
+                ${settings.localStorage_API?.includes('onrender') || settings.localStorage_REACT?.includes('onrender') ? 
+                    '<p style="color: red;">⚠️ onrender.com이 여전히 설정되어 있습니다! "긴급 수정 실행" 버튼을 클릭하세요.</p>' : 
+                    '<p style="color: green;">✅ 설정이 올바릅니다.</p>'}
+            `;
+        }
+        
+        function goToApp() {
+            window.open('http://localhost:3001', '_blank');
+        }
+        
+        // 페이지 로드 시 자동 확인
+        window.onload = function() {
+            checkCurrentSettings();
+        };
+    </script>
+</body>
+</html>
