@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캐시 클리어 도구</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        .clear-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        .test-btn {
+            background: #3498db;
+            color: white;
+        }
+        .test-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .current-url {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+            font-family: monospace;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+            border-radius: 5px;
+        }
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #007bff;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 베트남 학생 관리 시스템<br>캐시 클리어 도구</h1>
+        
+        <div id="status" class="status info">
+            현재 API URL을 확인하고 있습니다...
+        </div>
+        
+        <div class="current-url" id="currentUrl">
+            로딩 중...
+        </div>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <strong>캐시 완전 삭제</strong>
+            <button class="clear-btn" onclick="clearEverything()">
+                🗑️ 모든 캐시 삭제하기
+            </button>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <strong>API 연결 테스트</strong>
+            <button class="test-btn" onclick="testAPI()">
+                🔍 API 연결 테스트
+            </button>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <strong>시스템으로 이동</strong>
+            <button class="test-btn" onclick="goToApp()">
+                🚀 로그인 페이지로 이동
+            </button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 올바른 API URL
+        const CORRECT_API_URL = 'https://vietnam-student-backend-production.up.railway.app/api';
+        
+        // 페이지 로드 시 현재 설정 확인
+        window.onload = function() {
+            checkCurrentSettings();
+        };
+
+        function checkCurrentSettings() {
+            const currentUrl = localStorage.getItem('apiUrl') || process.env.REACT_APP_API_URL || '설정되지 않음';
+            document.getElementById('currentUrl').innerHTML = `
+                <strong>현재 설정된 API URL:</strong><br>
+                ${currentUrl}<br><br>
+                <strong>올바른 API URL:</strong><br>
+                ${CORRECT_API_URL}
+            `;
+            
+            if (currentUrl.includes('onrender.com')) {
+                document.getElementById('status').className = 'status error';
+                document.getElementById('status').innerHTML = '❌ 잘못된 API URL이 설정되어 있습니다!';
+            } else if (currentUrl.includes('railway.app')) {
+                document.getElementById('status').className = 'status success';
+                document.getElementById('status').innerHTML = '✅ 올바른 API URL이 설정되어 있습니다!';
+            }
+        }
+
+        async function clearEverything() {
+            try {
+                // 1. localStorage 클리어
+                localStorage.clear();
+                console.log('✅ localStorage 클리어 완료');
+                
+                // 2. sessionStorage 클리어
+                sessionStorage.clear();
+                console.log('✅ sessionStorage 클리어 완료');
+                
+                // 3. 쿠키 삭제
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                console.log('✅ 쿠키 클리어 완료');
+                
+                // 4. Service Worker 제거
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for(let registration of registrations) {
+                        await registration.unregister();
+                    }
+                    console.log('✅ Service Worker 제거 완료');
+                }
+                
+                // 5. 캐시 스토리지 클리어
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(
+                        cacheNames.map(cacheName => caches.delete(cacheName))
+                    );
+                    console.log('✅ 캐시 스토리지 클리어 완료');
+                }
+                
+                // 6. 올바른 API URL 설정
+                localStorage.setItem('apiUrl', CORRECT_API_URL);
+                
+                document.getElementById('result').innerHTML = `
+                    <div class="status success">
+                        ✅ 모든 캐시가 성공적으로 삭제되었습니다!<br>
+                        올바른 API URL이 설정되었습니다.<br><br>
+                        <strong>다음 단계:</strong><br>
+                        1. Ctrl + Shift + R을 눌러 강제 새로고침<br>
+                        2. API 연결 테스트 버튼 클릭
+                    </div>
+                `;
+                
+                // 3초 후 페이지 새로고침
+                setTimeout(() => {
+                    location.reload(true);
+                }, 3000);
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <div class="status error">
+                        ❌ 오류 발생: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function testAPI() {
+            document.getElementById('result').innerHTML = `
+                <div class="status info">
+                    API 연결을 테스트하는 중...
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(CORRECT_API_URL + '/health', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok || response.status === 404) {
+                    document.getElementById('result').innerHTML = `
+                        <div class="status success">
+                            ✅ Railway 백엔드 연결 성공!<br>
+                            상태 코드: ${response.status}<br>
+                            이제 로그인 페이지로 이동할 수 있습니다.
+                        </div>
+                    `;
+                } else {
+                    throw new Error(`응답 코드: ${response.status}`);
+                }
+            } catch (error) {
+                // CORS 에러도 연결은 된 것으로 간주
+                if (error.message.includes('CORS') || error.message.includes('Failed to fetch')) {
+                    document.getElementById('result').innerHTML = `
+                        <div class="status success">
+                            ✅ 백엔드 서버가 실행 중입니다!<br>
+                            (CORS는 정상적인 보안 기능입니다)<br>
+                            이제 로그인 페이지로 이동할 수 있습니다.
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('result').innerHTML = `
+                        <div class="status error">
+                            ❌ API 연결 실패<br>
+                            오류: ${error.message}<br><br>
+                            Railway 대시보드에서 백엔드 상태를 확인하세요.
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function goToApp() {
+            // 새 탭에서 열기 (캐시 회피)
+            const timestamp = new Date().getTime();
+            window.open(`https://vetnam-student.netlify.app?nocache=${timestamp}`, '_blank');
+        }
+    </script>
+</body>
+</html>

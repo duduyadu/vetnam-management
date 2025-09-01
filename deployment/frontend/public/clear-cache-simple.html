@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캐시 클리어 도구 (간단 버전)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #007bff;
+            border-radius: 5px;
+        }
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #007bff;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .code-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px 5px;
+            text-align: center;
+        }
+        .button:hover {
+            background: #218838;
+        }
+        .button-danger {
+            background: #dc3545;
+        }
+        .button-danger:hover {
+            background: #c82333;
+        }
+        kbd {
+            background: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 2px 5px;
+            font-family: monospace;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 캐시 클리어 가이드</h1>
+        
+        <div class="warning">
+            ⚠️ <strong>현재 문제:</strong> 브라우저가 오래된 캐시를 사용해서 
+            <code>onrender.com</code>으로 요청을 보내고 있습니다.
+        </div>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <strong>Chrome 브라우저에서 사이트 열기</strong>
+            <p>아래 링크를 클릭하여 사이트를 여세요:</p>
+            <a href="https://vetnam-student.netlify.app" target="_blank" class="button">
+                🌐 사이트 열기 (새 탭)
+            </a>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <strong>개발자 도구에서 캐시 삭제</strong>
+            <p>사이트가 열린 후:</p>
+            <ol>
+                <li><kbd>F12</kbd> 키를 눌러 개발자 도구 열기</li>
+                <li><strong>Console</strong> 탭 클릭</li>
+                <li>아래 코드를 복사해서 붙여넣고 <kbd>Enter</kbd> 누르기:</li>
+            </ol>
+            <div class="code-box">
+                <button class="copy-btn" onclick="copyCode()">📋 복사</button>
+                <code id="codeToRun">
+// 모든 캐시 삭제 및 새로고침
+localStorage.clear();
+sessionStorage.clear();
+console.log('✅ 캐시 삭제 완료!');
+setTimeout(() => location.reload(true), 1000);
+                </code>
+            </div>
+            <div id="copySuccess" class="success">✅ 코드가 클립보드에 복사되었습니다!</div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <strong>강제 새로고침 (추가 확실)</strong>
+            <p>캐시 삭제 후에도 문제가 있다면:</p>
+            <ul>
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd> 누르기</li>
+                <li>또는 새로고침 버튼을 <strong>우클릭</strong> → "캐시 비우기 및 강력 새로고침"</li>
+            </ul>
+        </div>
+
+        <div class="step" style="background: #e8f5e9; border-left-color: #4caf50;">
+            <span class="step-number" style="background: #4caf50;">4</span>
+            <strong>로그인 테스트</strong>
+            <p>캐시가 삭제되면 로그인해보세요:</p>
+            <ul>
+                <li>Username: <strong>admin</strong></li>
+                <li>Password: <strong>Admin123!@#</strong></li>
+            </ul>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+
+        <div class="step" style="background: #fff3cd; border-left-color: #ffc107;">
+            <strong>💡 빠른 대안: 시크릿 모드 사용</strong>
+            <p>위 방법이 복잡하다면, 그냥 시크릿 모드를 사용하세요:</p>
+            <ol>
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd> (새 시크릿 창)</li>
+                <li>주소창에 입력: <code>https://vetnam-student.netlify.app</code></li>
+                <li>로그인하기</li>
+            </ol>
+        </div>
+
+        <div class="step" style="background: #f8d7da; border-left-color: #dc3545;">
+            <strong>🚨 최후의 방법: Chrome 캐시 완전 삭제</strong>
+            <p>Chrome 설정에서 모든 캐시 삭제:</p>
+            <ol>
+                <li>Chrome 설정 열기 (⋮ → 설정)</li>
+                <li>"개인정보 및 보안" → "인터넷 사용 기록 삭제"</li>
+                <li>"캐시된 이미지 및 파일" 체크</li>
+                <li>시간 범위: "전체"</li>
+                <li>"인터넷 사용 기록 삭제" 클릭</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function copyCode() {
+            const code = document.getElementById('codeToRun').textContent;
+            navigator.clipboard.writeText(code).then(function() {
+                document.getElementById('copySuccess').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('copySuccess').style.display = 'none';
+                }, 3000);
+            }, function(err) {
+                // 폴백: 구식 방법
+                const textArea = document.createElement("textarea");
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                document.getElementById('copySuccess').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('copySuccess').style.display = 'none';
+                }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
