@@ -183,7 +183,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           <IconButton color="inherit" onClick={handleMenuClick}>
             <Avatar sx={{ width: 32, height: 32 }}>
-              {user?.full_name?.charAt(0).toUpperCase()}
+              {user?.name?.charAt(0).toUpperCase()}
             </Avatar>
           </IconButton>
           
@@ -194,7 +194,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           >
             <MenuItem disabled>
               <Typography variant="body2">
-                {user?.full_name}
+                {user?.name}
               </Typography>
             </MenuItem>
             <MenuItem disabled>

@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-// 환경변수가 제대로 작동하지 않아서 하드코딩
-const API_BASE_URL = 'https://vietnam-student-backend-production.up.railway.app/api';
+// 환경변수에서 API URL 가져오기 (Railway 백엔드)
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://vietnam-student-backend-production.up.railway.app/api';
 
 // 디버깅용: 실제 API URL 확인
-console.log('🔥 HARDCODED API_BASE_URL:', API_BASE_URL);
-console.log('⚠️ Using Railway backend directly');
+console.log('🚀 API_BASE_URL:', API_BASE_URL);
+console.log('📍 Environment:', process.env.NODE_ENV);
+console.log('✅ Using:', API_BASE_URL.includes('railway') ? 'Railway backend' : 'Other backend');
 
 // Axios 인스턴스 생성
 const api = axios.create({
