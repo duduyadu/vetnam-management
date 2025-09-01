@@ -140,8 +140,6 @@ const Agencies: React.FC = () => {
       } else {
         response = await agenciesAPI.create(formData);
       }
-          'Authorization': `Bearer ${token}`
-        },
       
       if (response.data.success) {
         setSuccess(response.data.message || '유학원이 저장되었습니다.');
