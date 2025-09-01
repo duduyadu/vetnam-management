@@ -13,4 +13,4 @@
 
 # 환경변수는 Netlify 대시보드에서 설정하세요
 # [context.production.environment]
-#   REACT_APP_API_URL = "https://vetnam-management.onrender.com/api"
+#   REACT_APP_API_URL = "https://vietnam-student-backend-production.up.railway.app/api"

@@ -4,7 +4,7 @@
 
 1. **GitHub 계정** - 코드 저장소용
 2. **Vercel 계정** - Frontend 배포용 (GitHub 계정으로 가입)
-3. **Render 계정** - Backend 배포용 (GitHub 계정으로 가입)
+3. **Railway 계정** - Backend 배포용 (GitHub 계정으로 가입)
 
 ## 🚀 배포 단계
 
@@ -29,9 +29,9 @@ git branch -M main
 git push -u origin main
 ```
 
-### 2단계: Backend 배포 (Render)
+### 2단계: Backend 배포 (Railway)
 
-1. [Render](https://render.com) 로그인
+1. [Railway](https://railway.app) 로그인
 2. "New +" → "Web Service" 클릭
 3. GitHub 저장소 연결
 4. 설정:
@@ -48,9 +48,9 @@ git push -u origin main
    ```
 6. "Create Web Service" 클릭
 
-### 3단계: Database 생성 (Render)
+### 3단계: Database 생성 (Railway)
 
-1. Render 대시보드에서 "New +" → "PostgreSQL" 클릭
+1. Railway 대시보드에서 "New" → "Database" → "PostgreSQL" 클릭
 2. 설정:
    - **Name**: vietnam-student-db
    - **Region**: Singapore (아시아)
@@ -68,7 +68,7 @@ git push -u origin main
    - **Framework Preset**: Create React App
 5. 환경 변수 설정:
    ```
-   REACT_APP_API_URL=https://your-backend.onrender.com
+   REACT_APP_API_URL=https://vietnam-student-backend-production.up.railway.app/api
    ```
 6. "Deploy" 클릭
 
@@ -76,13 +76,13 @@ git push -u origin main
 
 ### Frontend (.env)
 ```env
-REACT_APP_API_URL=https://vietnam-student-backend.onrender.com
+REACT_APP_API_URL=https://vietnam-student-backend-production.up.railway.app/api
 ```
 
 ### Backend (.env)
 ```env
 # Database
-DB_HOST=your-database-host.render.com
+DB_HOST=your-database-host.railway.app
 DB_PORT=5432
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
@@ -127,8 +127,8 @@ npm install
 
 배포 완료 후:
 - Frontend: `https://your-app.vercel.app`
-- Backend: `https://your-backend.onrender.com`
-- API 문서: `https://your-backend.onrender.com/api-docs`
+- Backend: `https://vietnam-student-backend-production.up.railway.app`
+- API 문서: `https://vietnam-student-backend-production.up.railway.app/api-docs`
 
 ## 🔄 업데이트 방법
 
@@ -138,7 +138,7 @@ git add .
 git commit -m "Update: 설명"
 git push
 ```
-- Vercel과 Render가 자동으로 재배포합니다
+- Vercel과 Railway가 자동으로 재배포합니다
 
 ## 📞 지원
 
